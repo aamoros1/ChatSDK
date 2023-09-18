@@ -1,0 +1,22 @@
+/*
+  Localizable.strings
+  
+
+  Created by Chris on 8/29/23.
+  
+*/
+
+"ChatSetupHeader.securityLabel" = "We are here to help!\n Chat with a representative now.";
+"ChatSetupHeader.securitySubLabel" = "For your security, please do not provide your passwords, personal identification numbers (PINs) or Social Security numbers.";
+"ChatSetupChatAboutCell.character.count" = "Remaining characters: %i";
+"ChatSetupChatAboutCell.about.question" = "What would you like to chat about?";
+"ChatInConversationView.Alert.Title" = "This message was not delivered.";
+"ChatInConversationView.Alert.Remove" = "Remove";
+"ChatInConversationView.Accessibility.Failed" = "Your message, %@, failed to send";
+"Try.Again" = "Try Again";
+"Cancel" = "Cancel";
+"ChatInQueueView.queueInfoDescription" = "A representative will be with you shortly. You may end this session by clicking “X”.";
+"ChatInQueue.Collapse" = "Collapse";
+
+"Chat.Close.Hint" = "Double Tap to go back to Chat home screen";
+"Close" = "Close";
