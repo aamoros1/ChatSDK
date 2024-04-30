@@ -8,7 +8,6 @@ import SwiftUI
 import Foundation
 
 public struct ChatClientMessageCell: View {
-    @ObservedObject
     private var message: ChatClientMessage
     private let retryAction: () -> ()
 

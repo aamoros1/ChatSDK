@@ -1,12 +1,14 @@
 //
 // ChatMessage.swift
 // 
-// Created by Alwin Amoros on 9/4/23.
+// 
 //
 
 import Foundation
+import Observation
 
-public class ChatMessage: Comparable, ObservableObject {
+@Observable
+public class ChatMessage: Comparable {
 
     private(set) var date: Date
     private(set) var uuid: UUID
@@ -15,6 +17,7 @@ public class ChatMessage: Comparable, ObservableObject {
     /**
      Formatter for the date's timestamp representation. Formats only the time in "short" format
      */
+    @ObservationIgnored
     private lazy var formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .none

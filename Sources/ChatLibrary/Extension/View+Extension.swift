@@ -1,7 +1,7 @@
 //
 // View+Extension.swift
 // 
-// Created by Alwin Amoros on 8/27/23.
+// 
 //
 
 import SwiftUI

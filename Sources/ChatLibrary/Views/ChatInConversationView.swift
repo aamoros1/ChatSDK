@@ -1,14 +1,14 @@
 //
 // ChatInConversationView.swift
+//
 // 
-// Created by Alwin Amoros on 9/4/23.
-// 
+//
 
-import Foundation
 import SwiftUI
+import Foundation
 
-public struct ChatInConversationView: View {
-
+struct ChatInConversationView<Controller>: View where Controller: ChatManagering {
+    
     private struct LocalizedString {
         static var tryAgainButton: String {
             String(localized: "Try.again",
@@ -28,37 +28,35 @@ public struct ChatInConversationView: View {
         }
     }
     
-    @EnvironmentObject
-    var viewModel: ChatViewModel
+    @Environment(Controller.self) var chatController
     @State
-    var enableSendButton: Bool = false
+    var messageToSend: String = ""
+    @State var showAlert: Bool = false
     
-    public var body: some View {
+    var body: some View {
         VStack {
             ScrollViewReader { proxy in
                 ScrollView {
-                    ForEach(viewModel.messages, id: \.uuid) { message in
+                    ForEach(chatController.messages, id: \.uuid) { message in
                         cellForRow(message: message)
                     }
                 }
-                .onChange(of: viewModel.messages) { message in
-                    proxy.scrollTo(message.last?.uuid)
+                .onChange(of: chatController.messages, initial: false) { oldValue, newValue in
+                    proxy.scrollTo(newValue.last?.uuid)
                 }.alert(LocalizedString.alertTitle,
-                        isPresented: $viewModel.showAlert,
-                        presenting: viewModel.messageToResend)
+                        isPresented: $showAlert,
+                        presenting: chatController.messageToResend)
                 { message in
                     Button(LocalizedString.tryAgainButton) {
-                        Task {
-                            await viewModel.resendMessage(message)
-                        }
+                            chatController.resendMessage(message: message)
                     }
                     Button(LocalizedString.cancelButton,
                            role: .cancel,
-                           action: { viewModel.showAlert = false })
+                           action: { showAlert = false })
                     Button(LocalizedString.removeButton,
                            role: .destructive)
                     {
-                        viewModel.removeUnsentMessage(message)
+                        chatController.removeUnsentMessage(message: message)
                     }
                 }
                 inputContainerView
@@ -69,7 +67,7 @@ public struct ChatInConversationView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Cancel") {
-                    viewModel.userTappedCancelButton()
+                    chatController.userTappedCancelButton()
                 }
             }
         }
@@ -83,7 +81,8 @@ extension ChatInConversationView {
         case is ChatClientMessage.Type:
             let message = message as! ChatClientMessage
             ChatClientMessageCell(message: message) {
-                viewModel.tappedOnClientError(message)
+                showAlert = true
+                chatController.tappedOnClientError(message: message)
             }
             .listRowSeparator(.hidden)
             .id(message.uuid)
@@ -114,23 +113,22 @@ extension ChatInConversationView {
             sendButton
         }
     }
-
+    
     private var sendButton: some View {
         Button("send") {
-            viewModel.sendMessage()
+            chatController.sendMessage(message: messageToSend)
+            messageToSend = ""
         }
         .frame(height: 34)
-        .disabled(enableSendButton)
+        .disabled(messageToSend.isEmpty)
         .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
     }
-
+    
     private var inputTextView: some View {
-        TextField("", text: $viewModel.messageToSend, prompt: Text(verbatim: "Message"), axis: .vertical)
-            .onReceive(viewModel.$messageToSend) { inputText in
-                enableSendButton = inputText.isEmpty
-            }
+        TextField("", text: $messageToSend, prompt: Text(verbatim: "Message"), axis: .vertical)
             .onSubmit {
-                viewModel.sendMessage()
+                chatController.sendMessage(message: messageToSend)
+                messageToSend = ""
             }
             .padding()
     }
@@ -138,34 +136,10 @@ extension ChatInConversationView {
 
 struct ChatInConversationViewPreview: PreviewProvider {
     static var previews: some View {
-        let viewModel = ChatViewModel()
-        viewModel.populateWithMockMessage()
-        return VStack {
-            ChatInConversationView()
-                .environmentObject(viewModel)
+        NavigationView  {
+            ChatInConversationView<ChatController>()
+                .environment(ChatController.init())
         }
     }
 }
 
-extension ChatViewModel {
-    func populateWithMockMessage() {
-        Task(priority: .background) {
-            while true {
-                let randomSeconds = UInt64.random(in: 1..<10)
-                try await Task.sleep(nanoseconds: randomSeconds * 1000000000)
-                await addNewMessage(
-                    ChatClientMessage("content1"))
-                try await Task.sleep(nanoseconds: 2000000000)
-                
-                await addNewMessage(ChatRemoteMessage("hello", identifier: "1"))
-                
-                let randomSeconds1 = UInt64.random(in: 3..<16)
-                try await Task.sleep(nanoseconds: randomSeconds1 * 1000000000)
-                await addNewMessage(
-                    ChatClientMessage(
-                        "content2",
-                        didSend: randomSeconds1 % 5 == 0 ))
-            }
-        }
-    }
-}

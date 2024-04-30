@@ -1,13 +1,14 @@
 //
 // ChatContainerView.swift
 // 
-// Created by Alwin Amoros on 9/9/23.
+//
 // 
 
 import SwiftUI
+import Observation
 
-
-class AlertOperation: ObservableObject {
+@Observable
+public class AlertOperation {
     enum Alert {
         case endChat(ok: () -> (), cancel: () -> ())
         
@@ -33,59 +34,107 @@ class AlertOperation: ObservableObject {
         }
     }
 
-    @Published
     var alert: Alert? = nil {
         willSet {
             guard alert != nil else { return }
             showAlert = true
         }
     }
-    @Published
+
     var showAlert: Bool = false
 }
 
-public struct ChatContainerView: View {
-    @StateObject
-    var viewModel = ChatViewModel()
-    @StateObject
-    var alertManager = AlertControllerManager()
+@Observable
+open class ChatController: ChatManagering {
+    public func removeUnsentMessage(message: ChatMessage) {
+        if let index = messages.firstIndex(of: message) {
+            messages.remove(at: index)
+        }
+    }
+    
+    public func resendMessage(message: ChatMessage) {
+        
+    }
+    
+    public func sendMessage(message: String) {
+        
+    }
+    
+    
+    public init() {
+        
+    }
+    public func start() {
+        
+    }
+
+    @MainActor
+    func addNewMessage(_ message: ChatMessage) async {
+        messages.append(message)
+    }
+    
+    public func end() {
+        
+    }
+    
+    public func userTappedSubmit(withReason: String) {
+        
+    }
+    
+    public func tappedOnClientError(message: ChatMessage) {
+        
+    }
+    
+    public func sendMessage() {
+        
+    }
+    
+    public func userTappedCancelButton() {
+        
+    }
+    public var inputString: String = ""
+    
+    public var chatStatus: ChatClientStatus = .chatting
+     
+    public var messages: [ChatMessage] = []
+    
+    public var showAlert: Bool = false
+    
+    public var messageToResend: ChatMessage? = nil
+    
+    
+}
+
+public struct ChatContainerView<Controller>: View where Controller: ChatController {
+    @State
+    var chatController: Controller
 
     public var body: some View {
-        NavigationStack(path: $viewModel.path) {
-            ChatSetupView(textInput: $viewModel.messageToSend)
-                .navigationDestination(for: ChatNavigationStack.self) { state in
-                    switch state {
-                    case .inQueue:
-                        ChatInQueueView(queueInfo: "todo")
-                    case .inChat:
-                        ChatInConversationView()
-                    }
-                }
-                .onChange(of: viewModel.path) { newValue in
-                    viewModel.populateWithMockMessage()
-                }
-                .alert(alertManager.alertController?.alertTitle ?? "title not set",
-                       isPresented: $alertManager.showAlert,
-                       presenting: alertManager.alertController) { alertController in
-                    ForEach(alertController.actions) { action in
-                        Button(action.title,
-                               role: action.buttonRole,
-                               action: action.action ?? {})
-                    }
-
-
-                } message: { alertMessage in
-                    Text(alertMessage.alertBodyMessage)
-                }
+        Group {
+            switch chatController.chatStatus {
+            case .doingNothing:
+                ChatSetupView(textInput: $chatController.inputString)
+                    .environment(chatController)
+            case .requestingChat:
+                ChatSetupView(textInput: $chatController.inputString)
+                    .environment(chatController)
+            case .inQueue:
+                ChatInQueueView<Controller>(queueInfo: "")
+                    .environment(chatController)
+            case .chatting:
+                ChatInConversationView<Controller>()
+                    .environment(chatController)
+            }
         }
-        .environmentObject(viewModel)
-        .environmentObject(alertManager)
+        .task {
+            chatController.start()
+        }
     }
 }
 
 struct ChatContainerViewPreviews: PreviewProvider {
     static var previews: some View {
-        ChatContainerView()
+        ChatContainerView(chatController: ChatController.init())
             .preferredColorScheme(.dark)
     }
 }

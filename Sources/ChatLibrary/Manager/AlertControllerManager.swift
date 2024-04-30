@@ -1,16 +1,16 @@
 //
 // AlertControllerManager.swift
 // 
-// Created by Alwin Amoros on 9/16/23.
+// 
 // 
 
-import Foundation
 import SwiftUI
+import Foundation
+import Observation
 
-final public class AlertControllerManager: ObservableObject {
-    @Published
+@Observable
+final public class AlertControllerManager {
     var alertController: AlertController? = nil 
-    @Published
     var showAlert: Bool = false
     
     public struct AlertAction: Identifiable {
@@ -54,7 +54,6 @@ final public class AlertControllerManager: ObservableObject {
         }
     }
 
-    @MainActor
     func addAlertController(alertController: AlertController) {
         self.alertController = alertController
     }

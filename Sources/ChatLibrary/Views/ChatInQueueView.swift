@@ -1,16 +1,15 @@
 //
 // ChatInQueueView.swift
 // 
-// Created by Alwin Amoros on 9/16/23.
+// 
 //
 
 import SwiftUI
 
-struct ChatInQueueView: View {
-    @EnvironmentObject
-    var chatViewModel: ChatViewModel
-    @EnvironmentObject
-    var alertManager: AlertControllerManager
+struct ChatInQueueView<Controller>: View where Controller: ChatController {
+    
+    @Environment(Controller.self) var chatViewModel
+    @Environment(AlertControllerManager.self) var alertManager
     let queueInfo: String
 
     var body: some View {
@@ -57,7 +56,7 @@ extension ChatInQueueView {
             var alertcontroller = AlertControllerManager.AlertController(alertTitle: "todo title", bodyMessage: "s")
             alertcontroller.addAlertAction(titleButton: "Cancel")
             alertcontroller.addAlertAction(titleButton: "Ok") {
-                chatViewModel.didTapCancel()
+                chatViewModel.userTappedCancelButton()
             }
             alertManager.addAlertController(alertController: alertcontroller)
             alertManager.showAlert = true
@@ -79,6 +78,8 @@ extension ChatInQueueView {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatInQueueView(queueInfo: "Information")
+        ChatInQueueView<ChatController>(queueInfo: "Information")
+            .environment(ChatController.init())
+            .environment(AlertControllerManager.init())
     }
 }

@@ -1,20 +1,18 @@
 //
 // ChatSetupView.swift
 // 
-// Created by Alwin Amoros on 8/29/23.
+//
 //
 
 import Foundation
 import SwiftUI
 import Combine
 
-public struct ChatSetupView: View {
+struct ChatSetupView: View {
     @Binding
-    public var textInput: String
-    @EnvironmentObject
-    var chatViewModel: ChatViewModel
+    var textInput: String
     
-    public var body: some View {
+    var body: some View {
         List {
             ChatSetupHeader()
                 .frame(height: 150)
@@ -25,8 +23,6 @@ public struct ChatSetupView: View {
                 .alignmentGuide(.listRowSeparatorLeading) { dimension in
                     -dimension.width
                 }
-            Button("tap me", action: { chatViewModel.path.append(ChatNavigationStack.inQueue) } )
-                
         }
         .listStyle(.plain)
     }
@@ -116,7 +112,7 @@ extension ChatSetupChatAboutCell {
 
     private var textInputField: some View {
         TextField("", text: $inputString, axis: .vertical)
-            .onChange(of: inputString) { _ in
+            .onChange(of: inputString) {
                 shouldHidetitleQuestionLabel = !inputString.isEmpty
             }
             .font(.system(size: 15))
@@ -131,5 +127,6 @@ struct ChatSetupHeader_Preview: PreviewProvider {
     static var previews: some View {
         ChatSetupView(textInput: $inputString)
             .frame(width: .infinity)
+            .environment(ChatController.init())
     }
 }
