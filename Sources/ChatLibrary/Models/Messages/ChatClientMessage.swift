@@ -10,14 +10,14 @@ import Observation
 @Observable
 public class ChatClientMessage: ChatMessage {
 
-    var didSend: Bool
-    var inTransit: Bool
+    public var didSend: Bool
+    public var inTransit: Bool
 
     var shouldMoveToTheLeft: Bool {
         !didSend && !inTransit
     }
 
-    init(_ content: String, didSend: Bool = false) {
+    public init(_ content: String, didSend: Bool = false) {
         inTransit = false
         self.didSend = didSend
         super.init(content)

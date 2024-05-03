@@ -7,11 +7,11 @@
 import SwiftUI
 import Foundation
 
-struct ChatInConversationView<Controller>: View where Controller: ChatManagering {
+struct ChatInConversationView<Controller>: View where Controller: ChatController {
     
     private struct LocalizedString {
         static var tryAgainButton: String {
-            String(localized: "Try.again",
+            String(localized: "Try.Again",
                    bundle: .module)
         }
         static var alertTitle: String {
@@ -28,10 +28,14 @@ struct ChatInConversationView<Controller>: View where Controller: ChatManagering
         }
     }
     
-    @Environment(Controller.self) var chatController
+    @Environment(Controller.self) var chatController: Controller
     @State
-    var messageToSend: String = ""
+    var messageToSend: String = "hi"
     @State var showAlert: Bool = false
+
+    private var toSendMessage: ChatClientMessage {
+        .init(messageToSend)
+    }
     
     var body: some View {
         VStack {
@@ -43,22 +47,20 @@ struct ChatInConversationView<Controller>: View where Controller: ChatManagering
                 }
                 .onChange(of: chatController.messages, initial: false) { oldValue, newValue in
                     proxy.scrollTo(newValue.last?.uuid)
-                }.alert(LocalizedString.alertTitle,
-                        isPresented: $showAlert,
-                        presenting: chatController.messageToResend)
-                { message in
-                    Button(LocalizedString.tryAgainButton) {
-                            chatController.resendMessage(message: message)
-                    }
-                    Button(LocalizedString.cancelButton,
-                           role: .cancel,
-                           action: { showAlert = false })
-                    Button(LocalizedString.removeButton,
-                           role: .destructive)
-                    {
-                        chatController.removeUnsentMessage(message: message)
-                    }
                 }
+                .alert(chatController.chatAlert?.alertTitle ?? "Alert",
+                       isPresented: $showAlert,
+                       presenting: chatController.chatAlert)
+                { newAlert in
+                    ForEach(newAlert.actions) { alertAction in
+                        Button(alertAction.title,
+                               role: alertAction.buttonRole,
+                               action: alertAction.action)
+                    }
+                } message: { newAlert in
+                    Text(newAlert.alertBodyMessage)
+                }
+
                 inputContainerView
             }
         }
@@ -116,8 +118,11 @@ extension ChatInConversationView {
     
     private var sendButton: some View {
         Button("send") {
-            chatController.sendMessage(message: messageToSend)
-            messageToSend = ""
+            Task {
+                await chatController.sendMessage(message: toSendMessage)
+                messageToSend = ""
+            }
+            
         }
         .frame(height: 34)
         .disabled(messageToSend.isEmpty)
@@ -127,8 +132,10 @@ extension ChatInConversationView {
     private var inputTextView: some View {
         TextField("", text: $messageToSend, prompt: Text(verbatim: "Message"), axis: .vertical)
             .onSubmit {
-                chatController.sendMessage(message: messageToSend)
-                messageToSend = ""
+                Task {
+                    await chatController.sendMessage(message: toSendMessage)
+                    messageToSend = ""
+                }
             }
             .padding()
     }

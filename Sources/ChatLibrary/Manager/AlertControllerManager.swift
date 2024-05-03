@@ -8,10 +8,25 @@ import SwiftUI
 import Foundation
 import Observation
 
-@Observable
-final public class AlertControllerManager {
-    var alertController: AlertController? = nil 
-    var showAlert: Bool = false
+public class AlertController {
+    let alertTitle: String
+    let alertBodyMessage: String
+    var actions: [AlertAction] = []
+    
+    private init(title: String, message: String, actions: [AlertAction]) {
+        alertTitle = title
+        alertBodyMessage = message
+        self.actions = actions
+    }
+    
+    public convenience init(alertTitle: String, bodyMessage: String) {
+        self.init(title: alertTitle, message: bodyMessage, actions: [])
+    }
+
+    public func addAlertAction(titleButton: String, buttonRole: ButtonRole? = nil, handler: (() -> ())? = nil) {
+        let alertAction = AlertAction(title: titleButton, action: handler)
+        actions.append(alertAction)
+    }
     
     public struct AlertAction: Identifiable {
         public var id: String {
@@ -32,30 +47,4 @@ final public class AlertControllerManager {
             self.action = action ?? {}
         }
     }
-    
-    public struct AlertController {
-        let alertTitle: String
-        let alertBodyMessage: String
-        var actions: [AlertAction] = []
-        
-        private init(title: String, message: String, actions: [AlertAction]) {
-            alertTitle = title
-            alertBodyMessage = message
-            self.actions = actions
-        }
-        
-        init(alertTitle: String, bodyMessage: String) {
-            self.init(title: alertTitle, message: bodyMessage, actions: [])
-        }
-
-        mutating func addAlertAction(titleButton: String, buttonRole: ButtonRole? = nil, handler: (() -> ())? = nil) {
-            let alertAction = AlertAction(title: titleButton, action: handler)
-            actions.append(alertAction)
-        }
-    }
-
-    func addAlertController(alertController: AlertController) {
-        self.alertController = alertController
-    }
-    
 }

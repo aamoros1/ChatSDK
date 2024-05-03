@@ -59,25 +59,6 @@ extension ChatAgentMessageCell {
     }
 }
 
-//struct PreviewChatAgentMessageCell: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            ChatAgentMessageCell(
-//                message: "bob",
-//                agentName: "bobby")
-//            .previewLayout(PreviewLayout.sizeThatFits)
-//            .previewDisplayName("h2")
-//            ChatAgentMessageCell(
-//                message: "hello",
-//                agentName: "bobby")
-//            .previewLayout(PreviewLayout.sizeThatFits)
-//            .previewDisplayName("hi")
-//            .preferredColorScheme(.dark)
-//        }
-//    }
-//
-//}
-
 extension View {
     func square(size: CGFloat) -> some View {
         self.frame(width: size, height: size)

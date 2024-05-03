@@ -8,8 +8,7 @@ import SwiftUI
 
 struct ChatInQueueView<Controller>: View where Controller: ChatController {
     
-    @Environment(Controller.self) var chatViewModel
-    @Environment(AlertControllerManager.self) var alertManager
+    @Environment(Controller.self) var chatController
     let queueInfo: String
 
     var body: some View {
@@ -53,13 +52,7 @@ extension ChatInQueueView {
     
     private var cancelButton: some View {
         Button {
-            var alertcontroller = AlertControllerManager.AlertController(alertTitle: "todo title", bodyMessage: "s")
-            alertcontroller.addAlertAction(titleButton: "Cancel")
-            alertcontroller.addAlertAction(titleButton: "Ok") {
-                chatViewModel.userTappedCancelButton()
-            }
-            alertManager.addAlertController(alertController: alertcontroller)
-            alertManager.showAlert = true
+            chatController.userTappedCancelButton()
         } label: {
             Image("closeIcon", bundle: .module)
         }
@@ -78,8 +71,9 @@ extension ChatInQueueView {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatInQueueView<ChatController>(queueInfo: "Information")
-            .environment(ChatController.init())
-            .environment(AlertControllerManager.init())
+        NavigationView {
+            ChatInQueueView<ChatController>(queueInfo: "Information")
+                .environment(ChatController.init())
+        }
     }
 }

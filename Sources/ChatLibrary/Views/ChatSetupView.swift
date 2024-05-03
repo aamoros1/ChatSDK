@@ -8,9 +8,10 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct ChatSetupView: View {
-    @Binding
-    var textInput: String
+struct ChatSetupView<Controller>: View where Controller: ChatController{
+    @Environment(Controller.self)
+    var contrller: Controller
+    @Binding var inputString: String
     
     var body: some View {
         List {
@@ -19,7 +20,7 @@ struct ChatSetupView: View {
                 .alignmentGuide(.listRowSeparatorLeading) { dimension in
                     -dimension.width
                 }
-            ChatSetupChatAboutCell(inputString: $textInput)
+            ChatSetupChatAboutCell(inputString: $inputString)
                 .alignmentGuide(.listRowSeparatorLeading) { dimension in
                     -dimension.width
                 }
@@ -118,15 +119,5 @@ extension ChatSetupChatAboutCell {
             .font(.system(size: 15))
             .fixedSize(horizontal: false, vertical: true)
             .lineLimit(3)
-    }
-}
-
-struct ChatSetupHeader_Preview: PreviewProvider {
-    @State static var inputString: String = "This is a test message."
-    @State static var navigation = NavigationPath()
-    static var previews: some View {
-        ChatSetupView(textInput: $inputString)
-            .frame(width: .infinity)
-            .environment(ChatController.init())
     }
 }
