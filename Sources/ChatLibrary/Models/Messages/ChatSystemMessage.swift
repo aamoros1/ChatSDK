@@ -8,7 +8,7 @@ import Foundation
 
 public class ChatSystemMessage: ChatMessage {
 
-    init(_ content: String) {
+    public init(_ content: String) {
         super.init(content)
     }
 }

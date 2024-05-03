@@ -25,7 +25,7 @@ public class ChatMessage: Comparable {
         return formatter
     }()
 
-    var timestamp: String {
+    public var timestamp: String {
         formatter.string(from: date)
     }
 

@@ -9,7 +9,8 @@ import Observation
 
 @Observable
 open class ChatController: ChatManagering {
-
+    
+    public var chatAlert: AlertController?
     public var chatStatus: ChatClientStatus = .doingNothing
     public var messages: [ChatMessage] = []
     public var showAlert: Bool = false
@@ -49,14 +50,18 @@ open class ChatController: ChatManagering {
     
     @MainActor
     open func userTappedSubmit(params: String...) {
-        
+        chatStatus = .inQueue
     }
-    
+
     open func tappedOnClientError(message: ChatMessage) {
-        messageToResend = message
+        let alertController = AlertController(alertTitle: "title", bodyMessage: "Test")
+        alertController.addAlertAction(titleButton: "OK") {
+            self.removeUnsentMessage(message: message)
+        }
+        chatAlert = alertController
     }
     
     open func userTappedCancelButton() {
-        
+        chatStatus = .doingNothing
     }
 }
