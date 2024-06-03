@@ -8,6 +8,10 @@ import Foundation
 import SwiftUI
 
 public struct ChatAgentMessageCell: View {
+    private struct Constant {
+        static let accessibilityLabel: String = .init(localized: "Chat.Agent.Message.Cell.Accessibility.Label",
+                                                      bundle: .module)
+    }
     let message: ChatRemoteMessage
 
     public init (
@@ -35,10 +39,17 @@ extension ChatAgentMessageCell {
         Text(message.agentName)
     }
 
+    private var accessibilityLabel: Text {
+        .init(verbatim: String(format: Constant.accessibilityLabel,
+                               message.agentName,
+                               message.timestamp, message.content))
+    }
+
     private var messageBubbleView: some View {
         VStack(alignment: .leading) {
             agentNameLabel
             Text(message.content)
+                .textSelection(.enabled)
         }
         .padding(messageBubbleViewEdgeInset)
         .frame(minWidth: 9)
@@ -56,6 +67,7 @@ extension ChatAgentMessageCell {
             messageBubbleView
             Spacer(minLength: 30)
         }
+        .accessibilityLabel(accessibilityLabel)
     }
 }
 

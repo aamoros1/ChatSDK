@@ -20,3 +20,5 @@
 "Chat.Close.Hint" = "Double Tap to go back to Chat home screen";
 "Close" = "Close";
 "ChatSetupChatAboutCell.Submit" = "Submit";
+"Chat.Client.Message.Cell.Accessibility.Label" = "Your message at %@, %@.";
+"Chat.Agent.Message.Cell.Accessibility.Label" = "Message from %@ at %@, %@.";

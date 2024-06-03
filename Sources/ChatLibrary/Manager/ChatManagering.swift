@@ -33,4 +33,5 @@ protocol ChatManagering: AnyObject, Observable {
     var showAlert: Bool { get }
     var messageToResend: ChatMessage? { get }
     var chatAlert: AlertController? { get }
+    var isDisabled: Bool { get }
 }

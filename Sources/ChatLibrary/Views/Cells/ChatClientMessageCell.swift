@@ -8,6 +8,9 @@ import SwiftUI
 import Foundation
 
 public struct ChatClientMessageCell: View {
+    struct Constant {
+        static let ChatClientMessageCellAccessibilityLabel: String = String(localized: "Chat.Client.Message.Cell.Accessibility.Label", bundle: .module)
+    }
     private var message: ChatClientMessage
     private let retryAction: () -> ()
 
@@ -42,6 +45,7 @@ extension ChatClientMessageCell {
 
     private var messageBubbleView: some View {
         Text(message.content)
+            .textSelection(.enabled)
             .frame(minWidth: 9)
             .padding(messageBubbleViewEdgeInset)
             .background(
@@ -52,10 +56,18 @@ extension ChatClientMessageCell {
                 .fill(Color.blue)
             )
     }
+
+    private var accessibilityLabel: Text {
+        Text(verbatim:
+                String(format: Constant.ChatClientMessageCellAccessibilityLabel,
+                       message.timestamp, message.content)
+        )
+    }
     public var body: some View {
         HStack {
             Spacer(minLength: 55)
             messageBubbleView
+                .accessibilityLabel(accessibilityLabel)
                 .padding(.trailing, 2)
             if !message.didSend {
                 retryButton
@@ -79,7 +91,10 @@ struct PreviewChatClientMessageCell: PreviewProvider {
                 message: .init(
                     "failed message",
                     didSend: false),
-                retryAction: {})
+                retryAction: {
+                    var string = AttributedString( "hi")
+                    string.accessibilitySpeechAnnouncementPriority = .high
+                })
             .previewLayout(PreviewLayout.sizeThatFits)
             .preferredColorScheme(.dark)
             .previewDisplayName("darkmode")

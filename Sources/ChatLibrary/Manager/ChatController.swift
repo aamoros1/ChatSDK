@@ -15,6 +15,7 @@ open class ChatController: ChatManagering {
     public var messages: [ChatMessage] = []
     public var showAlert: Bool = false
     public var messageToResend: ChatMessage? = nil
+    public var isDisabled: Bool = true
     
     open func removeUnsentMessage(message: ChatMessage) {
         if let index = messages.firstIndex(of: message) {

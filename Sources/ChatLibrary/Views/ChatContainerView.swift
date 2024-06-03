@@ -7,26 +7,28 @@
 import SwiftUI
 import Observation
 
-public struct ChatContainerView<Controller>: View where Controller: ChatController {
+public struct ChatContainerView<Controller, Container>: View where Controller: ChatController, Container: View {
     @State
     public var chatController: Controller
     @State var navigationPath: NavigationPath = .init()
     @State var inputString: String = ""
+    private let content: () -> Container
 
-    public init(chatController: Controller) {
+    public init(chatController: Controller, @ViewBuilder container: @escaping () -> Container) {
+        self.content = container
         _chatController = State(wrappedValue: chatController)
     }
     
     public var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack {
-                ChatSetupView<Controller>(inputString: $inputString)
-                    .environment(chatController)
+                content()
                 Button {
                     chatController.userTappedSubmit(params: inputString)
                 } label: {
                     Text(String(localized: "ChatSetupChatAboutCell.Submit", bundle: .module))
                 }
+                .disabled(chatController.isDisabled)
             }
             .navigationDestination(for: ChatClientStatus.self) { path in
                 switch path {
