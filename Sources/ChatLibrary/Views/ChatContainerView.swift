@@ -8,15 +8,13 @@ import SwiftUI
 import Observation
 
 public struct ChatContainerView<Controller, Container>: View where Controller: ChatController, Container: View {
-    @State
-    public var chatController: Controller
+    @Environment(Controller.self) var chatController: Controller
     @State var navigationPath: NavigationPath = .init()
     @State var inputString: String = ""
     private let content: () -> Container
 
-    public init(chatController: Controller, @ViewBuilder container: @escaping () -> Container) {
+    public init(@ViewBuilder container: @escaping () -> Container) {
         self.content = container
-        _chatController = State(wrappedValue: chatController)
     }
     
     public var body: some View {
