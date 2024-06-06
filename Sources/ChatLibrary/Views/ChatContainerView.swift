@@ -8,7 +8,7 @@ import SwiftUI
 import Observation
 
 public struct ChatContainerView<Controller, Container>: View where Controller: ChatController, Container: View {
-    @Environment(Controller.self) var chatController: Controller
+    @Environment(Controller.self) var chatController
     @State var navigationPath: NavigationPath = .init()
     @State var inputString: String = ""
     private let content: () -> Container

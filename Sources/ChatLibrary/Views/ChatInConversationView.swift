@@ -48,19 +48,6 @@ struct ChatInConversationView<Controller>: View where Controller: ChatController
                 .onChange(of: chatController.messages, initial: false) { oldValue, newValue in
                     proxy.scrollTo(newValue.last?.uuid)
                 }
-                .alert(chatController.chatAlert?.alertTitle ?? "Alert",
-                       isPresented: $showAlert,
-                       presenting: chatController.chatAlert)
-                { newAlert in
-                    ForEach(newAlert.actions) { alertAction in
-                        Button(alertAction.title,
-                               role: alertAction.buttonRole,
-                               action: alertAction.action)
-                    }
-                } message: { newAlert in
-                    Text(newAlert.alertBodyMessage)
-                }
-
                 inputContainerView
             }
         }
@@ -83,8 +70,18 @@ extension ChatInConversationView {
         case is ChatClientMessage.Type:
             let message = message as! ChatClientMessage
             ChatClientMessageCell(message: message) {
-                showAlert = true
-                chatController.tappedOnClientError(message: message)
+                chatController.showAlert = true
+                let alert = AlertController(
+                    alertTitle: "Warning",
+                    bodyMessage: "Would you like to resend the message or delete?"
+                )
+                alert.addAlertAction(titleButton: "Retry") {
+                    chatController.resendMessage(message: message)
+                }
+                alert.addAlertAction(titleButton: "Delete Message") {
+                    chatController.removeUnsentMessage(message: message)
+                }
+                chatController.chatAlert = alert
             }
             .listRowSeparator(.hidden)
             .id(message.uuid)
@@ -122,7 +119,6 @@ extension ChatInConversationView {
                 await chatController.sendMessage(message: toSendMessage)
                 messageToSend = ""
             }
-            
         }
         .frame(height: 34)
         .disabled(messageToSend.isEmpty)
