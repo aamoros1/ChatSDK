@@ -9,9 +9,9 @@ import Foundation
 import Observation
 
 public class AlertController {
-    let alertTitle: String
-    let alertBodyMessage: String
-    var actions: [AlertAction] = []
+    public let alertTitle: String
+    public let alertBodyMessage: String
+    public var actions: [AlertAction] = []
     
     private init(title: String, message: String, actions: [AlertAction]) {
         alertTitle = title
@@ -33,9 +33,9 @@ public class AlertController {
             title
         }
         
-        let title: String
-        let buttonRole: ButtonRole?
-        let action: (() -> ())
+        public let title: String
+        public let buttonRole: ButtonRole?
+        public let action: (() -> ())
         
         public init(title: String, action: (() -> ())?) {
             self.init(title: title, buttonRole: nil, action: action)
