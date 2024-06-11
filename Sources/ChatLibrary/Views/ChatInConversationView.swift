@@ -28,7 +28,7 @@ struct ChatInConversationView<Controller>: View where Controller: ChatController
         }
     }
     
-    @Environment(Controller.self) var chatController: Controller
+    @Environment(Controller.self) var chatController
     @State
     var messageToSend: String = "hi"
     @State var showAlert: Bool = false

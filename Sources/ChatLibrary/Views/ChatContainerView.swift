@@ -31,10 +31,9 @@ public struct ChatContainerView<Controller, Container>: View where Controller: C
             .navigationDestination(for: ChatClientStatus.self) { path in
                 switch path {
                 case .inQueue, .requestingChat:
-                    ChatInQueueView(queueInfo: "")
+                    ChatInQueueView<Controller>(queueInfo: "")
                 case .chatting:
                     ChatInConversationView<Controller>()
-                        .environment(chatController)
                 default:
                     Text("u shouln't see this \(String(describing: path))")
                 }
