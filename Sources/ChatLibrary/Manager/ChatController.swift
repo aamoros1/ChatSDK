@@ -28,8 +28,8 @@ open class ChatController: ChatManagering {
     }
     
     @MainActor
-    open func sendMessage(message: ChatClientMessage) async {
-        messages.append(message)
+    open func sendMessage(message: String) async {
+        messages.append(ChatClientMessage(message))
     }
     
     

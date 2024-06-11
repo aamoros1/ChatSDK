@@ -30,12 +30,8 @@ struct ChatInConversationView<Controller>: View where Controller: ChatController
     
     @Environment(Controller.self) var chatController
     @State
-    var messageToSend: String = "hi"
+    var messageToSend: String = ""
     @State var showAlert: Bool = false
-
-    private var toSendMessage: ChatClientMessage {
-        .init(messageToSend)
-    }
     
     var body: some View {
         VStack {
@@ -116,7 +112,7 @@ extension ChatInConversationView {
     private var sendButton: some View {
         Button("send") {
             Task {
-                await chatController.sendMessage(message: toSendMessage)
+                await chatController.sendMessage(message: messageToSend)
                 messageToSend = ""
             }
         }
@@ -129,7 +125,7 @@ extension ChatInConversationView {
         TextField("", text: $messageToSend, prompt: Text(verbatim: "Message"), axis: .vertical)
             .onSubmit {
                 Task {
-                    await chatController.sendMessage(message: toSendMessage)
+                    await chatController.sendMessage(message: messageToSend)
                     messageToSend = ""
                 }
             }

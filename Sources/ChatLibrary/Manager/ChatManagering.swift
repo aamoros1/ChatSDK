@@ -24,7 +24,7 @@ protocol ChatManagering: AnyObject, Observable {
     func end()
     func userTappedSubmit(params: String...)
     func tappedOnClientError(message: ChatMessage)
-    func sendMessage(message: ChatClientMessage) async
+    func sendMessage(message: String) async
     func removeUnsentMessage(message: ChatMessage)
     func resendMessage(message: ChatMessage)
     func userTappedCancelButton()
