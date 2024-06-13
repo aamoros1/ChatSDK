@@ -135,7 +135,7 @@ extension ChatInConversationView {
 
 struct ChatInConversationViewPreview: PreviewProvider {
     static var previews: some View {
-        NavigationView  {
+        NavigationStack {
             ChatInConversationView<ChatController>()
                 .environment(ChatController.init())
         }

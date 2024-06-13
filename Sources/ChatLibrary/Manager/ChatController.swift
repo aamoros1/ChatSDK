@@ -11,7 +11,7 @@ import Observation
 open class ChatController: ChatManagering {
     
     public var chatAlert: AlertController?
-    public var chatStatus: ChatClientStatus = .doingNothing
+    public var chatStatus: ChatClientStatus? 
     public var messages: [ChatMessage] = []
     public var showAlert: Bool = false
     public var messageToResend: ChatMessage? = nil

@@ -1,7 +1,7 @@
 //
 // ChatInQueueView.swift
-// 
-// 
+//
+//
 //
 
 import SwiftUI
@@ -17,7 +17,6 @@ struct ChatInQueueView<Controller>: View where Controller: ChatController {
             queueInfoDescription
             Spacer()
         }
-        .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 cancelButton
@@ -71,9 +70,10 @@ extension ChatInQueueView {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ChatInQueueView<ChatController>(queueInfo: "Information")
                 .environment(ChatController.init())
         }
+        .preferredColorScheme(.dark)
     }
 }

@@ -12,7 +12,11 @@ public enum ChatClientUserActions {
     case userTapped
 }
 
-public enum ChatClientStatus {
+public enum ChatClientStatus: String, Identifiable {
+    public var id: String {
+        rawValue
+    }
+    
     case doingNothing
     case requestingChat
     case inQueue
@@ -28,7 +32,7 @@ protocol ChatManagering: AnyObject, Observable {
     func removeUnsentMessage(message: ChatMessage)
     func resendMessage(message: ChatMessage)
     func userTappedCancelButton()
-    var chatStatus: ChatClientStatus { get }
+    var chatStatus: ChatClientStatus? { get }
     var messages: [ChatMessage] { get }
     var showAlert: Bool { get }
     var messageToResend: ChatMessage? { get }
