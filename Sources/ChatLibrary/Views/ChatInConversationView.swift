@@ -63,39 +63,39 @@ extension ChatInConversationView {
     @ViewBuilder
     private func cellForRow(message: ChatMessage) -> some View{
         switch type(of: message) {
-        case is ChatClientMessage.Type:
-            let message = message as! ChatClientMessage
-            ChatClientMessageCell(message: message) {
-                chatController.showAlert = true
-                let alert = AlertController(
-                    alertTitle: "Warning",
-                    bodyMessage: "Would you like to resend the message or delete?"
-                )
-                alert.addAlertAction(titleButton: "Retry") {
-                    chatController.resendMessage(message: message)
+            case is ChatClientMessage.Type:
+                let message = message as! ChatClientMessage
+                ChatClientMessageCell(message: message) {
+                    chatController.showAlert = true
+                    let alert = AlertController(
+                        alertTitle: "Warning",
+                        bodyMessage: "Would you like to resend the message or delete?"
+                    )
+                    alert.addAlertAction(titleButton: "Retry") {
+                        chatController.resendMessage(message: message)
+                    }
+                    alert.addAlertAction(titleButton: "Delete Message") {
+                        chatController.removeUnsentMessage(message: message)
+                    }
+                    chatController.chatAlert = alert
                 }
-                alert.addAlertAction(titleButton: "Delete Message") {
-                    chatController.removeUnsentMessage(message: message)
-                }
-                chatController.chatAlert = alert
-            }
-            .listRowSeparator(.hidden)
-            .id(message.uuid)
-            .transition(
-                .move(edge: message.shouldMoveToTheLeft ? .leading : .trailing)
-            )
-        case is ChatRemoteMessage.Type:
-            let message = message as! ChatRemoteMessage
-            ChatAgentMessageCell(message: message)
                 .listRowSeparator(.hidden)
                 .id(message.uuid)
-                .transition(.opacity)
-                .zIndex(1)
-        case is ChatSystemMessage.Type:
-            /// TODO
-            Text("hi")
-        default:
-            fatalError()
+                .transition(
+                    .move(edge: message.shouldMoveToTheLeft ? .leading : .trailing)
+                )
+            case is ChatRemoteMessage.Type:
+                let message = message as! ChatRemoteMessage
+                ChatAgentMessageCell(message: message)
+                    .listRowSeparator(.hidden)
+                    .id(message.uuid)
+                    .transition(.opacity)
+                    .zIndex(1)
+            case is ChatSystemMessage.Type:
+                let message = message as! ChatSystemMessage
+                ChatSystemMessageCell(systemContent: message)
+            default:
+                fatalError()
         }
     }
     private var maxNumberLines: Int {
